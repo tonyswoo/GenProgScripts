@@ -24,13 +24,14 @@
 # 12th param is the path to file containing sampled negative tests"
 # 13th param is set to \"true\" if positive tests are to be specified using sampled tests else set this to \"false\""
 # 14th param is the path to file containing sampled positive tests"
+# 15th param is set to \"true\" if you are use entropy in fitness scoring else set this to \"false\""
 
 #Example of usage:
-#./runGenProgForBug.sh Math 2 allHuman 100 ExamplesCheckedOut 1 5 false /usr/lib/jvm/java-1.7.0-openjdk-amd64 /usr/lib/jvm/java-1.8.0-openjdk-amd64 false \"\" false \"\"
+#./runGenProgForBug.sh Math 2 allHuman 100 ExamplesCheckedOut 1 5 false /usr/lib/jvm/java-1.7.0-openjdk-amd64 /usr/lib/jvm/java-1.8.0-openjdk-amd64 false \"\" false \"\" true
 
 
-if [ "$#" -lt 14 ]; then
-	echo "This script should be run with 14 parameters:"
+if [ "$#" -lt 15 ]; then
+	echo "This script should be run with 15 parameters:"
 	echo " 1st param is the project in upper case (ex: Lang, Chart, Closure, Math, Time)"
 	echo " 2nd param is the bug number (ex: 1,2,3,4,...)"
 	echo " 3th param is the option of running the test suite (ex: allHuman, oneHuman, oneGenerated)"
@@ -45,6 +46,7 @@ if [ "$#" -lt 14 ]; then
         echo " 12th param is the path to file containing sampled negative tests"
         echo " 13th param is set to \"true\" if positive tests are to be specified using sampled tests else set this to \"false\""
         echo " 14th param is the path to file containing sampled positive tests"
+	echo " 15th param is set to \"true\" if you are use entropy in fitness scoring else set this to \"false\""
 
 else
 
@@ -62,8 +64,9 @@ SAMPLENEGTESTS="${11}"
 NEGTESTPATH="${12}"
 SAMPLEPOSTESTS="${13}"
 POSTESTPATH="${14}"
+ENTROPY="${15}"
 
-if [ "$#" -eq 14 ]; then
+if [ "$#" -eq 15 ]; then
   DIROFJAVA7="$9"
   DIROFJAVA8="${10}"
 fi
@@ -109,7 +112,7 @@ if [ -d "$GP4J_HOME" ]; then
 
     cd $currentDir
 
-    ./prepareBug.sh $PROJECT $BUGNUMBER $OPTION $TESTSUITESAMPLE $BUGSFOLDER $DIROFJAVA7 $DIROFJAVA8 $SAMPLENEGTESTS $NEGTESTPATH $SAMPLEPOSTESTS $POSTESTPATH
+    ./prepareBug.sh $PROJECT $BUGNUMBER $OPTION $TESTSUITESAMPLE $BUGSFOLDER $DIROFJAVA7 $DIROFJAVA8 $SAMPLENEGTESTS $NEGTESTPATH $SAMPLEPOSTESTS $POSTESTPATH $ENTROPY
 
     if [ -d "$BUGWD/$WD" ]; then
       #Go to the working directory
@@ -142,7 +145,7 @@ if [ -d "$GP4J_HOME" ]; then
 	#sudo update-java-alternatives -s $DIROFJAVA8
 
 	JAVALOCATION=$(which java)
-	timeout -sHUP 24h $JAVALOCATION -ea -Dlog4j.configurationFile=file:"$GP4J_HOME"/src/log4j.properties -Dfile.encoding=UTF-8 -classpath "$GP4J_HOME"/target/uber-GenProg4Java-0.0.1-SNAPSHOT.jar clegoues.genprog4java.main.Main $D4J_HOME/$BUGSFOLDER/"$LOWERCASEPACKAGE""$BUGNUMBER"Buggy/defects4j.config | tee $D4J_HOME/$BUGSFOLDER/"$LOWERCASEPACKAGE""$BUGNUMBER"Buggy/log"$PROJECT""$BUGNUMBER"Seed$seed.txt
+	timeout -sHUP 36h $JAVALOCATION -ea -Dlog4j.configurationFile=file:"$GP4J_HOME"/src/log4j.properties -Dfile.encoding=UTF-8 -classpath "$GP4J_HOME"/target/uber-GenProg4Java-0.0.1-SNAPSHOT.jar clegoues.genprog4java.main.Main $D4J_HOME/$BUGSFOLDER/"$LOWERCASEPACKAGE""$BUGNUMBER"Buggy/defects4j.config | tee $D4J_HOME/$BUGSFOLDER/"$LOWERCASEPACKAGE""$BUGNUMBER"Buggy/log"$PROJECT""$BUGNUMBER"Seed$seed.txt
 
 
 	#Save the variants in a tar file

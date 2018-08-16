@@ -20,7 +20,7 @@
 # Example usage, VM:
 #./prepareBug.sh Math 2 allHuman 100 ExamplesCheckedOut /usr/lib/jvm/java-7-oracle/ /usr/lib/jvm/java-8-oracle/ true <path to neg.test> true <path to pos.test>
 
-if [ "$#" -ne 11 ]; then
+if [ "$#" -ne 12 ]; then
     echo "This script should be run with 11 parameters:"
 	echo "1st param: project name, sentence case (ex: Lang, Chart, Closure, Math, Time)"
 	echo "2nd param: bug number (ex: 1,2,3,4,...)"
@@ -33,6 +33,7 @@ if [ "$#" -ne 11 ]; then
 	echo "9th param is the path to file containing sampled negative tests"
 	echo "10th param is set to \"true\" if positive tests are to be specified using sampled tests else set this to \"false\""
 	echo "11th param is the path to file containing sampled positive tests"
+	echo "12th param is set to \"true\" if you are use entropy in fitness scoring else set this to \"false\""
     exit 0
 fi
 
@@ -47,6 +48,7 @@ SAMPLENEGTESTS="$8"
 NEGTESTPATH="$9"
 SAMPLEPOSTESTS="${10}"
 POSTESTPATH="${11}"
+ENTROPY="${12}"
 
 #Add the path of defects4j so the defects4j's commands run 
 export PATH=$PATH:"$D4J_HOME"/framework/bin/
@@ -131,6 +133,7 @@ compileCommand = $D4J_HOME/$BUGSFOLDER/$LOWERCASEPACKAGE$2Buggy/runCompile.sh
 targetClassName = $BUGWD/bugfiles.txt
 testGranularity=method
 continue=true
+useEntropy=$ENTROPY
 
 # 0.1 for GenProg and 1.0 for TrpAutoRepair and PAR
 sample=0.1  
